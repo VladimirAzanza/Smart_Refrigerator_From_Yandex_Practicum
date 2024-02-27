@@ -90,23 +90,23 @@ def remove(items, title, unit):
         break      
     return message
 
+#Add a good in dict goods:
 add(goods, 'Яйца', Decimal('10'), '2023-9-30')
 add(goods, 'Вода', Decimal('2.5'))
-
+#Add by note a good in dict goods:
 add_by_note(goods, 'Яйца гусиные 4 2023-07-15')
 add_by_note(goods, 'Яйца гусиные 1.5 2024-02-21')
 add_by_note(goods, 'Яйца 2.5')
 print(goods)
-
+#Find by keywords a good in dict goods:
 print(find(goods, 'уси'))
 print(find(goods, 'йц'))
 print(find(goods, 'од'))
-
+#Find by keywords the amount of a good in dict goods:
 print(amount(goods, 'йца'))
 print(amount(goods, 'Вода'))
-
+#Find by number of days left to expire the good in dict goods:
 print(expire(goods, 2))
-
+#Remove a good in dict goods:
 print(remove(goods, 'Яйца', Decimal('12.6')))
 print(remove(goods, 'Яца', Decimal('13.5')))
-#print(goods)
