@@ -5,7 +5,11 @@ from typing import Optional
 goods: dict = {}
 
 
-def add(items: dict, title: str, quantity: Decimal, expiration_date: Optional[str] = None) -> dict:
+def add(
+        items: dict,
+        title: str,
+        quantity: Decimal,
+        expiration_date: Optional[str] = None) -> dict:
     # Formato datetime.date para fecha de expiracion.
     # Формат datetime.date для даты истечения срока годности.
     expiration_format = (
@@ -41,13 +45,16 @@ def add_by_note(items: dict, note: str) -> dict:
     # Dependiendo de longitud notes,busca el titulo, amount y fecha expiracion.
     # В зависимости от длины notes, ищется заголовок, сумма и срок годности.
     if len(notes[-1]) > 3:
-        expiration_date = datetime.date(datetime.strptime(notes[-1], "%Y-%m-%d"))
+        expiration_date = datetime.strptime(notes[-1], "%Y-%m-%d").date()
         amount_format, title = Decimal(notes[-2]), (str.join(" ", notes[:-2]))
     else:
         expiration_date = None
         amount_format, title = Decimal(notes[-1]), (str.join(" ", notes[:-1]))
 
-    notes_list = [{"amount": amount_format, "expiration_date": expiration_date}]
+    notes_list = [{
+        "amount": amount_format,
+        "expiration_date": expiration_date
+    }]
     # Se tiene un diccionario con clave : lista{clave:valor}.
     # Cловарь с ключом : списком{ключ : значение}.
     if title in items:
