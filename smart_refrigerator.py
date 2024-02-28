@@ -1,34 +1,40 @@
 from datetime import datetime, timedelta
 from decimal import Decimal
+from typing import Optional
 
-goods = {}
+goods: dict = {}
 
 
-def add(items, title, quantity, expiration_date=None):
+def add(items: dict, title: str, quantity: Decimal, expiration_date: Optional[str] = None) -> dict:
     # Formato datetime.date para fecha de expiracion.
     # Формат datetime.date для даты истечения срока годности.
-    expiration_date = (
+    expiration_format = (
         datetime.date(datetime.strptime(expiration_date, "%Y-%m-%d"))
         if expiration_date
         else None
     )
     # Lista para el valor dentro del diccionario.
     # Cписок для значения внутри словаря
-    notes_list = [{"amount": Decimal(quantity), "expiration_date": expiration_date}]
-
+    notes_list = [
+        {
+            "amount": Decimal(quantity),
+            "expiration_date": expiration_format
+        }
+    ]
     # Agregar al diccionario los pares clave:valor o valor a clave existente.
     # Добавить в словарь пары ключ:значение или только значение к ключу.
-    (
-        items[title].append(
-            {"amount": Decimal(quantity), "expiration_date": expiration_date}
-        )
-        if title in items
-        else dict.update(items, {title: notes_list})
-    )
+    if title in items:
+        items[title].append({
+            "amount": Decimal(quantity),
+            "expiration_date": expiration_format
+        })
+    else:
+        items[title] = notes_list
+        # dict.update(items, {title: notes_list})
     return items
 
 
-def add_by_note(items, note):
+def add_by_note(items: dict, note: str) -> dict:
     # Divide las notas separadas en espacio por comas
     # Разделяет заметки, разделенные пробелами, запятыми
     notes = str.split(note, " ")
@@ -44,22 +50,24 @@ def add_by_note(items, note):
     notes_list = [{"amount": amount_format, "expiration_date": expiration_date}]
     # Se tiene un diccionario con clave : lista{clave:valor}.
     # Cловарь с ключом : списком{ключ : значение}.
-    (
-        items[title].append(
-            {"amount": amount_format, "expiration_date": expiration_date}
-        )
-        if title in items
-        else dict.update(items, {title: notes_list})
-    )
+    if title in items:
+        items[title].append({
+            "amount": amount_format,
+            "expiration_date": expiration_date
+        })
+    else:
+        items[title] = notes_list
     return items
 
 
-def find(items, needle):
+def find(items: dict, needle: str) -> list:
     # Se genera una lista con los productos disponibles.
     # Lista indiferente a minusculas/mayusculas y fragmento de palabra.
     # Генерируется список доступных продуктов.
     # Список нечувствителен к регистру и позволяет находить фрагменты слов.
-    product_list = [item for item in items if (item.lower()).find(needle.lower()) >= 0]
+    product_list = [
+        item for item in items if (item.lower()).find(needle.lower()) >= 0
+        ]
     return product_list
 
 
@@ -104,7 +112,8 @@ def remove(items, title, unit):
             product_amount_sum += sum(product_amount_list)
             product_units = product_amount_sum - unit
             message = (
-                f'Продукт "{title}" в холодильнике всё ещё имеет {product_units} единиц'
+                f'Продукт "{title}" в холодильнике '
+                f'всё ещё имеет {product_units} единиц'
             )
 
             if product_units == 0:
@@ -142,5 +151,5 @@ print(amount(goods, "Вода"))
 print(expire(goods, 2))
 
 # Remove a good in dict goods:
-print(remove(goods, "Яйца", Decimal("12.6")))
+print(remove(goods, "Яйца", Decimal("10")))
 print(remove(goods, "Яца", Decimal("13.5")))
